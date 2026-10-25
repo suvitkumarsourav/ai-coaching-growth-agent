@@ -13,6 +13,22 @@ An AI-powered application that helps students explore courses and receive career
 - AI-generated reply drafts
 - Institute dashboard
 
+
+## Application Screenshots
+
+### Student Website
+
+Students can explore courses and access AI-powered career guidance.
+
+![Student Website](screenshots/student-website.png)
+
+### Institute Dashboard
+
+The dashboard helps manage student leads, track statuses, and schedule follow-ups.
+
+![Institute Dashboard](screenshots/institute-dashboard.png)
+
+
 ## Technology Stack
 
 - Python
