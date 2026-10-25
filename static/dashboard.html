@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institute Lead Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 25px 35px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #dbeafe;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 25px 18px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .card, .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .card h2 {
+            font-size: 30px;
+            margin: 10px 0 0;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 200px auto;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 750px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        th {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .field textarea {
+            min-height: 90px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 7px;
+            display: none;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .reply-output {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 7px;
+            white-space: pre-wrap;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters, .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Institute Lead Dashboard</h1>
+    <p>Manage student enquiries, follow-ups and AI reply drafts.</p>
+</header>
+
+<main>
+    <button id="refreshBtn" type="button">Refresh Dashboard</button>
+    <span class="muted" id="lastUpdated"></span>
+
+    <div id="message" class="message"></div>
+
+    <section class="summary">
+        <div class="card">
+            <p>Total Leads</p>
+            <h2 id="totalLeads">0</h2>
+        </div>
+
+        <div class="card">
+            <p>New Leads</p>
+            <h2 id="newLeads">0</h2>
+        </div>
+
+        <div class="card">
+            <p>Interested Leads</p>
+            <h2 id="interestedLeads">0</h2>
+        </div>
+
+        <div class="card">
+            <p>Pending Follow-ups</p>
+            <h2 id="followUpCount">0</h2>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Student Enquiries</h2>
+
+        <div class="filters">
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="Search name, phone or course"
+            >
+
+            <select id="statusFilter">
+                <option value="">All statuses</option>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="interested">Interested</option>
+                <option value="admitted">Admitted</option>
+                <option value="not_interested">Not interested</option>
+            </select>
+
+            <button id="filterBtn" type="button">Search</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Course</th>
+                        <th>Enquiry</th>
+                        <th>Status</th>
+                        <th>Follow-up date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leadsBody">
+                    <tr>
+                        <td colspan="6">Loading leads...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Add Student Lead</h2>
+
+        <form id="leadForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="studentName">Student Name</label>
+                    <input id="studentName" required minlength="2" maxlength="100">
+                </div>
+
+                <div class="field">
+                    <label for="phone">Phone Number</label>
+                    <input id="phone" required minlength="10" maxlength="15">
+                </div>
+
+                <div class="field full">
+                    <label for="course">Interested Course</label>
+                    <input id="course" required minlength="2" maxlength="100">
+                </div>
+
+                <div class="field full">
+                    <label for="enquiry">Enquiry Message</label>
+                    <textarea id="enquiry" required minlength="5" maxlength="1000"></textarea>
+                </div>
+            </div>
+
+            <br>
+            <button type="submit">Save Lead</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>AI Reply Draft</h2>
+        <p class="muted">
+            Enter verified course details to generate a professional reply.
+            This feature drafts a message; it does not send it.
+        </p>
+
+        <form id="replyForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="replyCourse">Course Name</label>
+                    <input id="replyCourse" required minlength="2">
+                </div>
+
+                <div class="field">
+                    <label for="studentMessage">Student's Message</label>
+                    <textarea id="studentMessage" required minlength="3"></textarea>
+                </div>
+
+                <div class="field full">
+                    <label for="courseDetails">Verified Course Details</label>
+                    <textarea id="courseDetails" required minlength="5"></textarea>
+                </div>
+            </div>
+
+            <br>
+            <button type="submit">Generate AI Reply</button>
+        </form>
+
+        <div id="replyOutput" class="reply-output" hidden></div>
+    </section>
+</main>
+
+<script>
+    const API = window.location.origin;
+    let leads = [];
+
+    const get = id => document.getElementById(id);
+
+    function showMessage(text, type = "error") {
+        const box = get("message");
+        box.textContent = text;
+        box.className = "message " + type;
+    }
+
+    async function apiRequest(path, options = {}) {
+        const response = await fetch(API + path, {
+            ...options,
+            headers: {
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        const text = await response.text();
+        let data;
+
+        try {
+            data = text ? JSON.parse(text) : {};
+        } catch {
+            throw new Error("Server returned an invalid response.");
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                typeof data.detail === "string"
+                    ? data.detail
+                    : "Request failed: " + response.status
+            );
+        }
+
+        return data;
+    }
+
+    function renderLeads() {
+        const query = get("searchInput").value.trim().toLowerCase();
+        const status = get("statusFilter").value;
+
+        const filtered = leads.filter(lead => {
+            const text = [
+                lead.student_name,
+                lead.phone,
+                lead.interested_course,
+                lead.enquiry_message
+            ].join(" ").toLowerCase();
+
+            return (!query || text.includes(query))
+                && (!status || lead.status === status);
+        });
+
+        const body = get("leadsBody");
+        body.replaceChildren();
+
+        if (filtered.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 6;
+            cell.textContent = leads.length
+                ? "No leads match your search."
+                : "No leads found. Add your first student lead below.";
+
+            row.appendChild(cell);
+            body.appendChild(row);
+            return;
+        }
+
+        filtered.forEach(lead => {
+            const row = document.createElement("tr");
+
+            const student = document.createElement("td");
+            student.textContent = lead.student_name || "";
+            const phone = document.createElement("div");
+            phone.className = "muted";
+            phone.textContent = lead.phone || "";
+            student.appendChild(phone);
+
+            const course = document.createElement("td");
+            course.textContent = lead.interested_course || "";
+
+            const enquiry = document.createElement("td");
+            enquiry.textContent = lead.enquiry_message || "";
+
+            const statusCell = document.createElement("td");
+            const select = document.createElement("select");
+
+            [
+                ["new", "New"],
+                ["contacted", "Contacted"],
+                ["interested", "Interested"],
+                ["admitted", "Admitted"],
+                ["not_interested", "Not interested"]
+            ].forEach(([value, label]) => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = label;
+                select.appendChild(option);
+            });
+
+            select.value = lead.status || "new";
+
+            select.addEventListener("change", async () => {
+                try {
+                    await apiRequest(`/leads/${lead.id}/status`, {
+                        method: "PATCH",
+                        body: JSON.stringify({ status: select.value })
+                    });
+
+                    showMessage("Lead status updated.", "success");
+                    await loadDashboard();
+                } catch (error) {
+                    showMessage("Status update failed: " + error.message);
+                }
+            });
+
+            statusCell.appendChild(select);
+
+            const followUpCell = document.createElement("td");
+            const dateInput = document.createElement("input");
+            dateInput.type = "datetime-local";
+            dateInput.setAttribute("aria-label", "Follow-up date");
+
+            if (lead.follow_up_at) {
+                const date = new Date(lead.follow_up_at);
+
+                if (!Number.isNaN(date.getTime())) {
+                    const local = new Date(
+                        date.getTime() - date.getTimezoneOffset() * 60000
+                    );
+                    dateInput.value = local.toISOString().slice(0, 16);
+                }
+            }
+
+            followUpCell.appendChild(dateInput);
+
+            const actionCell = document.createElement("td");
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "Save date";
+            saveButton.type = "button";
+
+            saveButton.addEventListener("click", async () => {
+                if (!dateInput.value) {
+                    showMessage("Please select a follow-up date and time.");
+                    return;
+                }
+
+                try {
+                    await apiRequest(`/leads/${lead.id}/follow-up`, {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            follow_up_at: new Date(dateInput.value).toISOString()
+                        })
+                    });
+
+                    showMessage("Follow-up scheduled.", "success");
+                    await loadDashboard();
+                } catch (error) {
+                    showMessage("Follow-up failed: " + error.message);
+                }
+            });
+
+            actionCell.appendChild(saveButton);
+            row.append(student, course, enquiry, statusCell, followUpCell, actionCell);
+            body.appendChild(row);
+        });
+    }
+
+    async function loadDashboard() {
+        get("leadsBody").innerHTML =
+            '<tr><td colspan="6">Loading leads...</td></tr>';
+
+        try {
+            const [leadData, followData] = await Promise.all([
+                apiRequest("/leads"),
+                apiRequest("/follow-ups")
+            ]);
+
+            leads = leadData.leads || [];
+            const followUps = followData.follow_ups || [];
+
+            get("totalLeads").textContent = leads.length;
+            get("newLeads").textContent =
+                leads.filter(x => x.status === "new").length;
+            get("interestedLeads").textContent =
+                leads.filter(x => x.status === "interested").length;
+            get("followUpCount").textContent = followUps.length;
+
+            renderLeads();
+            get("lastUpdated").textContent =
+                " Last refreshed: " + new Date().toLocaleTimeString();
+        } catch (error) {
+            get("leadsBody").innerHTML =
+                '<tr><td colspan="6">Could not load leads.</td></tr>';
+
+            showMessage(
+                "Could not load dashboard data: " + error.message +
+                ". Check the server and /leads endpoint."
+            );
+        }
+    }
+
+    get("refreshBtn").addEventListener("click", loadDashboard);
+    get("filterBtn").addEventListener("click", renderLeads);
+    get("searchInput").addEventListener("input", renderLeads);
+    get("statusFilter").addEventListener("change", renderLeads);
+
+    get("leadForm").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const payload = {
+            student_name: get("studentName").value.trim(),
+            phone: get("phone").value.trim(),
+            interested_course: get("course").value.trim(),
+            enquiry_message: get("enquiry").value.trim()
+        };
+
+        try {
+            await apiRequest("/leads", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+
+            event.target.reset();
+            showMessage("Lead saved successfully.", "success");
+            await loadDashboard();
+        } catch (error) {
+            showMessage("Could not save lead: " + error.message);
+        }
+    });
+
+    get("replyForm").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const output = get("replyOutput");
+        output.hidden = false;
+        output.textContent = "Generating reply...";
+
+        try {
+            const result = await apiRequest("/ai/reply-draft", {
+                method: "POST",
+                body: JSON.stringify({
+                    course_name: get("replyCourse").value.trim(),
+                    student_message: get("studentMessage").value.trim(),
+                    verified_course_details: get("courseDetails").value.trim()
+                })
+            });
+
+            output.textContent = result.reply_draft || "No draft returned.";
+        } catch (error) {
+            output.textContent = "AI reply failed: " + error.message;
+        }
+    });
+
+    loadDashboard();
+</script>
+
+</body>
+</html>

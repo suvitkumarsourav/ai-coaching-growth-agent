@@ -1,0 +1,36 @@
+
+COURSES = [
+    {
+        "id": 1,
+        "name": "Python Programming",
+        "category": "Programming",
+        "level": "Beginner",
+        "duration": "8 weeks",
+        "fees_inr": 5000,
+        "prerequisites": ["Basic computer skills"],
+        "skills": ["Python basics", "Functions", "OOP", "File handling"],
+        "description": "Learn Python programming from the fundamentals.",
+    },
+    {
+        "id": 2,
+        "name": "Machine Learning",
+        "category": "AI/ML",
+        "level": "Intermediate",
+        "duration": "12 weeks",
+        "fees_inr": 12000,
+        "prerequisites": ["Python basics", "Basic statistics"],
+        "skills": ["Data preprocessing", "Model training", "Evaluation"],
+        "description": "Learn how to train and evaluate machine learning models.",
+    },
+    {
+        "id": 3,
+        "name": "Generative AI and LLMs",
+        "category": "AI/ML",
+        "level": "Intermediate",
+        "duration": "8 weeks",
+        "fees_inr": 10000,
+        "prerequisites": ["Python basics"],
+        "skills": ["LLMs", "Prompt engineering", "AI applications"],
+        "description": "Explore large language models and build AI-powered applications.",
+    },
+]

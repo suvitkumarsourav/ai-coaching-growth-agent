@@ -1,0 +1,629 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f8faff">
+<title>AI Coaching Growth Agent</title>
+<style>
+:root {
+  --ink: #172044;
+  --muted: #65708b;
+  --blue: #4263eb;
+  --purple: #7656e8;
+  --line: #e6eaf4;
+  --shadow: 0 18px 50px rgba(37,53,111,.09);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: #f8faff;
+  line-height: 1.6;
+}
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+
+.site-header {
+  padding: 15px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid #edf0f7;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 11px; font-weight: 800; }
+.brand-mark {
+  width: 43px; height: 43px;
+  display: grid; place-items: center;
+  color: white; border-radius: 14px;
+  background: linear-gradient(135deg,var(--blue),var(--purple));
+  font-size: 22px;
+}
+.brand-name { font-size: 15px; }
+.brand small {
+  display: block; color: var(--muted);
+  font-size: 10px; letter-spacing: 1px;
+}
+nav { display: flex; align-items: center; gap: 24px; }
+nav a { color: #596581; font-size: 13px; font-weight: 700; }
+nav a:hover { color: var(--blue); }
+.nav-cta, .primary-btn {
+  display: inline-block; padding: 12px 17px;
+  border-radius: 12px; color: white !important;
+  background: linear-gradient(115deg,var(--blue),var(--purple));
+  font-weight: 750; border: 0;
+  box-shadow: 0 8px 18px #5c61dc2a;
+  transition: transform .2s;
+}
+.nav-cta:hover, .primary-btn:hover { transform: translateY(-2px); }
+
+main { max-width: 1200px; margin: auto; padding: 0 24px; }
+.hero {
+  display: grid; grid-template-columns: 1.1fr .9fr;
+  align-items: center; gap: 42px; padding: 70px 0 58px;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border: 1px solid #e1e6ff;
+  border-radius: 999px; background: white; color: #5363c9;
+  font-size: 11px; font-weight: 800; letter-spacing: .5px;
+}
+.spark {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #7a63ef; box-shadow: 0 0 0 4px #ece8ff;
+}
+h1 {
+  margin: 21px 0 17px;
+  font-size: clamp(38px,5vw,62px);
+  line-height: 1.08; letter-spacing: -2.5px;
+}
+.gradient-text {
+  background: linear-gradient(110deg,#4263eb,#9654d9);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero-copy { max-width: 560px; color: var(--muted); font-size: 16px; line-height: 1.8; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 25px; }
+.secondary-btn {
+  display: inline-block; padding: 11px 16px;
+  border: 1px solid #dce2f0; border-radius: 12px;
+  background: white; font-weight: 750; font-size: 13px;
+}
+.secondary-btn:hover { border-color: #aebaff; }
+.trust-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-top: 25px; color: var(--muted); font-size: 11px; font-weight: 700;
+}
+.trust-row span::before { content: "✓"; color: #16855d; margin-right: 6px; }
+
+.hero-art { min-height: 370px; position: relative; display: grid; place-items: center; }
+.orb {
+  position: absolute; width: 300px; height: 300px; border-radius: 50%;
+  background: linear-gradient(140deg,#e9eaff,#f4eaff 55%,#e6f4ff);
+}
+.learning-card {
+  position: relative; width: min(100%,390px); padding: 24px;
+  border: 1px solid white; border-radius: 24px;
+  background: rgba(255,255,255,.97);
+  box-shadow: 0 30px 75px rgba(56,62,145,.16);
+}
+.learning-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.learning-top small { color: var(--muted); font-weight: 800; font-size: 10px; }
+.status-pill {
+  color: #16845f; background: #e4f9ef; padding: 5px 8px;
+  border-radius: 99px; font-size: 10px; font-weight: 800;
+}
+.learning-card h3 { font-size: 20px; margin: 20px 0 4px; }
+.learning-card p { color: var(--muted); font-size: 12px; margin: 0; }
+.progress-label { display: flex; justify-content: space-between; margin: 20px 0 8px; font-size: 11px; font-weight: 800; }
+.progress { height: 8px; background: #edf0fa; border-radius: 99px; overflow: hidden; }
+.progress span { display: block; width: 68%; height: 100%; background: linear-gradient(90deg,var(--blue),var(--purple)); }
+.mini-list { display: grid; gap: 10px; margin-top: 20px; }
+.mini-item { display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid #edf0f7; border-radius: 12px; }
+.mini-icon {
+  flex-shrink: 0; width: 36px; height: 36px;
+  display: grid; place-items: center; border-radius: 11px;
+  background: #f0efff; font-size: 18px;
+}
+.mini-item strong { display: block; font-size: 11px; }
+.mini-item small { display: block; color: var(--muted); font-size: 10px; }
+.floating-note {
+  position: absolute; right: 0; bottom: 25px; padding: 12px 15px;
+  border: 1px solid #edf0f7; border-radius: 14px;
+  background: white; box-shadow: var(--shadow); font-size: 11px; font-weight: 800;
+}
+.floating-note span { display: block; color: #16845f; font-weight: 650; }
+
+.section-heading { text-align: center; margin: 40px 0 30px; }
+.section-heading .eyebrow { margin-bottom: 12px; }
+h2 { font-size: clamp(25px,3vw,35px); letter-spacing: -1px; line-height: 1.2; margin: 0 0 10px; }
+.section-heading p { color: var(--muted); font-size: 14px; margin: 0; }
+.feature-strip {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 16px; margin-bottom: 65px;
+}
+.feature {
+  display: flex; gap: 14px; align-items: flex-start; padding: 19px;
+  background: white; border: 1px solid var(--line); border-radius: 17px;
+}
+.feature-icon {
+  flex-shrink: 0; width: 43px; height: 43px;
+  display: grid; place-items: center; border-radius: 13px;
+  background: #f0efff; font-size: 20px;
+}
+.feature h3 { margin: 0 0 5px; font-size: 14px; }
+.feature p { margin: 0; color: var(--muted); font-size: 12px; }
+
+.workspace { padding: 43px 0 65px; border-top: 1px solid #e9edf6; }
+.workspace-heading { margin-bottom: 24px; }
+.workspace-heading h2 { margin-top: 12px; }
+.workspace-heading p { color: var(--muted); font-size: 14px; margin: 0; }
+.workspace-grid {
+  display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 18px; align-items: start;
+}
+.tool-card {
+  min-width: 0; padding: 22px; background: white;
+  border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: 0 7px 25px rgba(35,51,103,.035);
+  transition: transform .2s,box-shadow .2s;
+}
+.tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.tool-icon {
+  flex-shrink: 0; width: 46px; height: 46px;
+  display: grid; place-items: center; border-radius: 14px;
+  background: #eff2ff; font-size: 22px;
+}
+.tool-card:nth-child(2) .tool-icon { background: #f1eaff; }
+.tool-card:nth-child(3) .tool-icon { background: #e4f8f0; }
+.card-head h3 { margin: 0; font-size: 17px; }
+.card-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+label { display: block; margin: 15px 0 7px; color: #424d6b; font-size: 12px; font-weight: 800; }
+input, textarea, select {
+  width: 100%; padding: 12px 13px; border: 1px solid #dce2ef;
+  border-radius: 11px; background: white; color: var(--ink); outline: none; font-size: 13px;
+}
+input:focus, textarea:focus, select:focus { border-color: #8d9cf7; box-shadow: 0 0 0 3px #e9ecff; }
+textarea { min-height: 110px; resize: vertical; }
+input::placeholder, textarea::placeholder { color: #9aa3b8; }
+.action-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 16px; padding: 12px 15px; border: 0; border-radius: 11px;
+  background: linear-gradient(110deg,var(--blue),var(--purple));
+  color: white; font-size: 13px; font-weight: 800; box-shadow: 0 8px 16px #5c61dc20;
+}
+.action-btn:hover { filter: brightness(1.05); }
+
+.result {
+  margin-top: 16px; padding: 15px; border: 1px solid #e7eafa;
+  border-radius: 12px; background: #f8f9ff; color: #394563;
+  overflow-wrap: anywhere; line-height: 1.7; font-size: 13px;
+  max-height: 420px; overflow: auto;
+}
+.result h4 { margin: 0 0 8px; color: var(--ink); font-size: 15px; }
+.result .course-meta { color: #5b6683; font-size: 12px; margin-bottom: 8px; }
+.result .course-item + .course-item { border-top: 1px solid #e2e7f5; margin-top: 14px; padding-top: 14px; }
+.result ul, .result ol { padding-left: 22px; }
+.result p { margin: 7px 0; }
+.result pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.hidden { display: none !important; }
+footer {
+  padding: 25px 20px; border-top: 1px solid #e9edf6;
+  background: white; text-align: center; color: #77819a; font-size: 12px;
+}
+.footer-brand { color: #4e5a7c; font-weight: 800; }
+
+@media(max-width:900px) {
+  .hero { grid-template-columns: 1fr; gap: 18px; padding-top: 48px; }
+  .hero-art { min-height: 340px; }
+  .workspace-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .tool-card:last-child { grid-column: 1/-1; }
+}
+@media(max-width:620px) {
+  .site-header { padding: 12px 16px; }
+  .brand-name { font-size: 13px; }
+  nav { gap: 10px; }
+  nav a:not(.nav-cta) { display: none; }
+  .nav-cta { padding: 10px 12px; font-size: 12px; }
+  main { padding: 0 16px; }
+  .hero { padding: 42px 0 30px; }
+  h1 { letter-spacing: -1.5px; }
+  .hero-copy { font-size: 14px; }
+  .hero-art { min-height: 310px; }
+  .orb { width: 240px; height: 240px; }
+  .learning-card { padding: 18px; }
+  .floating-note { right: 0; bottom: 5px; }
+  .feature-strip, .workspace-grid { grid-template-columns: 1fr; }
+  .tool-card:last-child { grid-column: auto; }
+  .workspace { padding-top: 34px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html { scroll-behavior: auto; }
+  *,*::before,*::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="#" aria-label="AI Coaching Growth Agent home">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">AI Coaching<small>GROWTH AGENT</small></span>
+  </a>
+  <nav aria-label="Main navigation">
+    <a href="#courses">Courses</a>
+    <a href="#ask-ai">AI Assistant</a>
+    <a href="#career">Career Roadmap</a>
+    <a class="nav-cta" href="#workspace">Get started ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="spark"></span> YOUR PERSONAL AI LEARNING COMPANION</span>
+      <h1>Your next chapter starts with <span class="gradient-text">the right skills.</span></h1>
+      <p class="hero-copy">Explore learning options, get AI-powered answers, and build a career roadmap designed around your goals.</p>
+      <div class="hero-actions">
+        <a class="primary-btn" href="#workspace">Explore your options →</a>
+        <a class="secondary-btn" href="#career">Plan my career</a>
+      </div>
+      <div class="trust-row">
+        <span>Personalized guidance</span>
+        <span>Learn at your pace</span>
+        <span>Goal-focused</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="Learning dashboard illustration">
+      <div class="orb"></div>
+      <div class="learning-card">
+        <div class="learning-top"><small>✦ YOUR LEARNING SPACE</small><span class="status-pill">IN PROGRESS</span></div>
+        <h3>Build skills. Grow with purpose.</h3>
+        <p>A little progress every week adds up.</p>
+        <div class="progress-label"><span>Learning journey</span><span>68%</span></div>
+        <div class="progress"><span></span></div>
+        <div class="mini-list">
+          <div class="mini-item"><span class="mini-icon">⌘</span><span><strong>Programming foundations</strong><small>Build your technical base</small></span></div>
+          <div class="mini-item"><span class="mini-icon">✧</span><span><strong>Explore Artificial Intelligence</strong><small>Turn curiosity into skills</small></span></div>
+          <div class="mini-item"><span class="mini-icon">↗</span><span><strong>Plan your next milestone</strong><small>One step at a time</small></span></div>
+        </div>
+      </div>
+      <div class="floating-note">✦ Made for your goals<span>Learning with direction</span></div>
+    </div>
+  </section>
+
+  <section aria-label="Platform benefits">
+    <div class="section-heading">
+      <span class="eyebrow">A SMARTER WAY TO LEARN</span>
+      <h2>Everything you need to move forward</h2>
+      <p>Get clarity on what to learn, ask questions, and plan your next steps.</p>
+    </div>
+    <div class="feature-strip">
+      <article class="feature"><span class="feature-icon">⌕</span><div><h3>Find the right course</h3><p>Search learning options by topic or skill.</p></div></article>
+      <article class="feature"><span class="feature-icon">✧</span><div><h3>Ask AI, anytime</h3><p>Get help understanding concepts and learning topics.</p></div></article>
+      <article class="feature"><span class="feature-icon">↗</span><div><h3>Follow your roadmap</h3><p>Get guidance based on your level and goal.</p></div></article>
+    </div>
+  </section>
+
+  <section class="workspace" id="workspace">
+    <div class="workspace-heading">
+      <span class="eyebrow">YOUR LEARNING WORKSPACE</span>
+      <h2>Where would you like to begin?</h2>
+      <p>Choose a tool below to take your next step.</p>
+    </div>
+
+    <div class="workspace-grid">
+      <section class="tool-card" id="courses">
+        <div class="card-head"><span class="tool-icon">⌕</span><div><h3>Explore courses</h3><p>Discover topics and skills</p></div></div>
+        <label for="courseQuery">What do you want to learn?</label>
+        <input id="courseQuery" placeholder="e.g. Python, Machine Learning" autocomplete="off">
+        <button class="action-btn" id="courseButton" onclick="searchCourses()">Search courses <span>→</span></button>
+        <div id="courseResults" class="result hidden" aria-live="polite"></div>
+      </section>
+
+      <section class="tool-card" id="ask-ai">
+        <div class="card-head"><span class="tool-icon">✧</span><div><h3>Ask AI</h3><p>Your learning assistant</p></div></div>
+        <label for="question">What would you like to know?</label>
+        <textarea id="question" placeholder="Ask about Python, AI or a concept you want to understand..."></textarea>
+        <button class="action-btn" id="aiButton" onclick="askAI()">Get an answer <span>→</span></button>
+        <div id="aiResult" class="result hidden" aria-live="polite"></div>
+      </section>
+
+      <section class="tool-card" id="career">
+        <div class="card-head"><span class="tool-icon">↗</span><div><h3>Career guidance</h3><p>Make a plan for your goal</p></div></div>
+        <label for="level">Your current skill level</label>
+        <select id="level">
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Advanced</option>
+        </select>
+        <label for="goal">Your career goal</label>
+        <input id="goal" value="Become an AI Engineer" maxlength="200">
+        <label for="hours">Study hours per week</label>
+        <input id="hours" type="number" min="1" max="80" value="10">
+        <button class="action-btn" id="careerButton" onclick="getCareerGuidance()">Generate my roadmap <span>→</span></button>
+        <div id="careerResult" class="result hidden" aria-live="polite"></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer><span class="footer-brand">✦ AI Coaching Growth Agent</span> · Learn with direction, grow with confidence.</footer>
+
+<script>
+const API_BASE = window.location.origin;
+
+async function callAPI(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
+
+  const contentType = response.headers.get("content-type") || "";
+  let data;
+
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+    throw new Error(text || `Unexpected server response: ${response.status}`);
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      typeof data.detail === "string"
+        ? data.detail
+        : `Request failed: ${response.status}`
+    );
+  }
+  return data;
+}
+
+function showResult(id, message) {
+  const element = document.getElementById(id);
+  element.textContent = message;
+  element.classList.remove("hidden");
+}
+
+function showError(id, error) {
+  showResult(id, `Something went wrong: ${error.message}`);
+}
+
+/* Display course results as safe, readable cards. */
+function renderCourses(courses) {
+  const container = document.getElementById("courseResults");
+  container.replaceChildren();
+
+  courses.forEach(course => {
+    const item = document.createElement("article");
+    item.className = "course-item";
+
+    const title = document.createElement("h4");
+    title.textContent = course.name || "Course";
+    item.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "course-meta";
+
+    const fee = Number(course.fees_inr);
+    const feeText = Number.isFinite(fee)
+      ? `₹${fee.toLocaleString("en-IN")}`
+      : "Fee not listed";
+
+    meta.textContent =
+      `Level: ${course.level || "Not specified"} · ` +
+      `Duration: ${course.duration || "Not specified"} · Fee: ${feeText}`;
+    item.appendChild(meta);
+
+    const description = document.createElement("p");
+    description.textContent = course.description || "";
+    item.appendChild(description);
+
+    if (Array.isArray(course.skills) && course.skills.length) {
+      const skills = document.createElement("p");
+      skills.textContent = `Skills: ${course.skills.join(", ")}`;
+      item.appendChild(skills);
+    }
+
+    container.appendChild(item);
+  });
+
+  container.classList.remove("hidden");
+}
+
+/* Render basic Markdown safely without inserting AI text as raw HTML. */
+function renderMarkdown(id, markdown) {
+  const container = document.getElementById(id);
+  container.replaceChildren();
+
+  const lines = String(markdown || "").replace(/\r/g, "").split("\n");
+  let list = null;
+  let listType = "";
+
+  function closeList() {
+    list = null;
+    listType = "";
+  }
+
+  function inlineText(parent, text) {
+    const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parent.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+
+      const token = match[0];
+      const child = document.createElement(
+        token.startsWith("**") ? "strong" :
+        token.startsWith("`") ? "code" : "em"
+      );
+      child.textContent = token.startsWith("**")
+        ? token.slice(2, -2)
+        : token.slice(1, -1);
+      parent.appendChild(child);
+      lastIndex = pattern.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      parent.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      closeList();
+      continue;
+    }
+
+    const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+    if (headingMatch) {
+      closeList();
+      const heading = document.createElement(
+        headingMatch[1].length === 1 ? "h4" : "h4"
+      );
+      inlineText(heading, headingMatch[2]);
+      container.appendChild(heading);
+      continue;
+    }
+
+    const bulletMatch = line.match(/^[-*]\s+(.+)$/);
+    const numberMatch = line.match(/^\d+[.)]\s+(.+)$/);
+
+    if (bulletMatch || numberMatch) {
+      const type = bulletMatch ? "ul" : "ol";
+      if (!list || listType !== type) {
+        closeList();
+        list = document.createElement(type);
+        listType = type;
+        container.appendChild(list);
+      }
+      const li = document.createElement("li");
+      inlineText(li, (bulletMatch || numberMatch)[1]);
+      list.appendChild(li);
+      continue;
+    }
+
+    closeList();
+    const paragraph = document.createElement("p");
+    inlineText(paragraph, line);
+    container.appendChild(paragraph);
+  }
+
+  container.classList.remove("hidden");
+}
+
+function setLoading(buttonId, loading, label) {
+  const button = document.getElementById(buttonId);
+  if (loading) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = label;
+    button.disabled = true;
+    button.style.opacity = ".7";
+  } else {
+    button.textContent = button.dataset.originalText || label;
+    button.disabled = false;
+    button.style.opacity = "1";
+  }
+}
+
+async function searchCourses() {
+  const query = document.getElementById("courseQuery").value.trim();
+
+  if (!query) {
+    showResult("courseResults", "Please enter a topic to search.");
+    return;
+  }
+
+  setLoading("courseButton", true, "Searching...");
+  showResult("courseResults", "Searching courses...");
+
+  try {
+    const data = await callAPI(`/courses/search?q=${encodeURIComponent(query)}`);
+
+    if (!Array.isArray(data.courses) || data.courses.length === 0) {
+      showResult("courseResults", "No matching courses found. Try another topic or skill.");
+      return;
+    }
+
+    renderCourses(data.courses);
+  } catch (error) {
+    showError("courseResults", error);
+  } finally {
+    setLoading("courseButton", false, "Search courses");
+  }
+}
+
+async function askAI() {
+  const question = document.getElementById("question").value.trim();
+
+  if (!question) {
+    showResult("aiResult", "Please enter a question.");
+    return;
+  }
+
+  setLoading("aiButton", true, "Generating answer...");
+  showResult("aiResult", "Generating your answer...");
+
+  try {
+    const data = await callAPI("/ai/ask", {
+      method: "POST",
+      body: JSON.stringify({ question })
+    });
+    renderMarkdown("aiResult", data.answer || "The AI returned an empty answer.");
+  } catch (error) {
+    showError("aiResult", error);
+  } finally {
+    setLoading("aiButton", false, "Get an answer");
+  }
+}
+
+async function getCareerGuidance() {
+  const current_level = document.getElementById("level").value;
+  const career_goal = document.getElementById("goal").value.trim();
+  const weekly_hours = Number(document.getElementById("hours").value);
+
+  if (!career_goal || !Number.isInteger(weekly_hours) ||
+      weekly_hours < 1 || weekly_hours > 80) {
+    showResult("careerResult", "Enter a career goal and study hours between 1 and 80.");
+    return;
+  }
+
+  setLoading("careerButton", true, "Creating roadmap...");
+  showResult("careerResult", "Creating your personalized learning roadmap...");
+
+  try {
+    const data = await callAPI("/ai/career-guidance", {
+      method: "POST",
+      body: JSON.stringify({ current_level, career_goal, weekly_hours })
+    });
+    renderMarkdown("careerResult", data.roadmap || "The AI returned an empty roadmap.");
+  } catch (error) {
+    showError("careerResult", error);
+  } finally {
+    setLoading("careerButton", false, "Generate my roadmap");
+  }
+}
+
+document.getElementById("courseQuery").addEventListener("keydown", event => {
+  if (event.key === "Enter") searchCourses();
+});
+</script>
+</body>
+</html>
